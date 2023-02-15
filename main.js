@@ -12,6 +12,7 @@ window.addEventListener('load', async () => {
   });
 
   buttonEl.addEventListener('click', () => {
+    console.info('running `node index.js`')
     run();
   })
 
@@ -24,7 +25,7 @@ window.addEventListener('load', async () => {
 
 async function run() {
   // Run `npm run start` to start the Express app
-  await webcontainerInstance.spawn('node', ['index.j']);
+  await webcontainerInstance.spawn('node', ['index.js']);
 }
 
 /**
