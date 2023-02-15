@@ -12,7 +12,6 @@ window.addEventListener('load', async () => {
   });
 
   buttonEl.addEventListener('click', () => {
-    console.info('running `node index.js`')
     run();
   })
 
