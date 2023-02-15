@@ -11,38 +11,20 @@ window.addEventListener('load', async () => {
     writeIndexJS(e.currentTarget.value);
   });
 
+  buttonEl.addEventListener('click', () => {
+    run();
+  })
+
   // Call only once
   webcontainerInstance = await WebContainer.boot();
   await webcontainerInstance.mount(files);
 
-  const exitCode = await installDependencies();
-  if (exitCode !== 0) {
-    throw new Error('Installation failed');
-  };
-
-  startDevServer();
+  run();
 });
 
-async function installDependencies() {
-  // Install dependencies
-  const installProcess = await webcontainerInstance.spawn('npm', ['install']);
-  installProcess.output.pipeTo(new WritableStream({
-    write(data) {
-      console.log(data);
-    }
-  }))
-  // Wait for install command to exit
-  return installProcess.exit;
-}
-
-async function startDevServer() {
+async function run() {
   // Run `npm run start` to start the Express app
-  await webcontainerInstance.spawn('npm', ['run', 'start']);
-
-  // Wait for `server-ready` event
-  webcontainerInstance.on('server-ready', (port, url) => {
-    iframeEl.src = url;
-  });
+  await webcontainerInstance.spawn('node', ['index.j']);
 }
 
 /**
@@ -56,16 +38,14 @@ async function writeIndexJS(content) {
 document.querySelector('#app').innerHTML = `
   <div class="container">
     <div class="editor">
-      <textarea readonly>I am a textarea</textarea>
+      <textarea>I am a textarea</textarea>
     </div>
-    <div class="preview">
-      <iframe src="loading.html"></iframe>
-    </div>
+    <button>run the code</button>
   </div>
 `
 
 /** @type {HTMLIFrameElement | null} */
-const iframeEl = document.querySelector('iframe');
+const textareaEl = document.querySelector('textarea');
 
 /** @type {HTMLTextAreaElement | null} */
-const textareaEl = document.querySelector('textarea');
+const buttonEl = document.querySelector('button');
